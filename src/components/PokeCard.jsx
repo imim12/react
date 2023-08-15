@@ -13,7 +13,7 @@ const PokeCard = ({url, name}) => {
     async function fetchPokeDetailData(){
         try {
             const response = await axios.get(url)
-            console.log(response.data)
+            //console.log(response.data)
             const pokemonData = formatPokemonData(response.data);
             setPokemon(pokemonData)
         } catch (error) {
