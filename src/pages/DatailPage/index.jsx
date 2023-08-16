@@ -8,6 +8,7 @@ import { ArrowLeft } from '../../assets/ArrowLeft';
 import { Balance } from '../../assets/Balance';
 import { Vector } from '../../assets/Vector';
 import Type from '../../components/Type';
+import BaseStat from '../../components/BaseStat';
 
 const DetailPage = () => {
 
@@ -150,7 +151,7 @@ const DetailPage = () => {
                     <GreaterThan className='w-5 h-8 p-1'/>
                 </Link>
             )}
-                <section className=''>
+                <section className='w-full flex flex-col z-20 items-center justify-end relative h-full'>
                     <div className='absolute z-30 top-6 flex items-center w-full justify-between px-2'>
                         <div className='flex items-center gap-1'>
                             <Link to="/">  {/* 루트로 감 */}
@@ -215,7 +216,18 @@ const DetailPage = () => {
                             기본 능력치
                         </h2>
                         <div className='w-full'>
-                            Stat
+                            <table>
+                                <tbody>
+                                    {pokemon.stats.map((stat)=>(
+                                        <BaseStat
+                                            key={stat.name}
+                                            valueStat={stat.baseStat}
+                                            nameStat={stat.name}
+                                            type={pokemon.types[0]}
+                                        />
+                                    ))}                                   
+                                </tbody>
+                            </table>                            
                         </div>          
                         {pokemon.DamageRelations && (
                             <div className='w-10/12'>
