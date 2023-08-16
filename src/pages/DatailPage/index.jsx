@@ -10,11 +10,13 @@ import { Vector } from '../../assets/Vector';
 import Type from '../../components/Type';
 import BaseStat from '../../components/BaseStat';
 import DamageRelations from '../../components/DamageRelations';
+import DamageModal from '../../components/DamageModal';
 
 const DetailPage = () => {
 
     const [pokemon, setPokemon] = useState();
     const [isLoading, setIsLoading] = useState(true);
+    const [isModalOpen, setIsModalOpen] = useState(false)
 
 
     const params = useParams();  
@@ -176,6 +178,7 @@ const DetailPage = () => {
                             loading="lazy"
                             alt={pokemon.name}
                             className={`object-contain h-full cursor-pointer`}
+                            onClick={()=>setIsModalOpen(true)}
                         />
                     </div>
                 </section>
@@ -232,7 +235,7 @@ const DetailPage = () => {
                                 </tbody>
                             </table>                            
                         </div>          
-                        {pokemon.DamageRelations && (
+                        {/* {pokemon.DamageRelations && (
                             <div className='w-10/12'>
                                 <h2 className={`text-center text-base font-semibold ${text}`}>
                                     <DamageRelations
@@ -241,9 +244,18 @@ const DetailPage = () => {
                                 </h2>
                                 데미지
                             </div>
-                        )}       
+                        )}        */}
                 </section>        
         </div>
+        {/* 이미지를 누르면 isModalOpen 상태값이 true가 되면서 밑의 코드 실행.
+        모달은 div의 크기를 가로, 세로 100%로 해서 뒤덮음 */}
+        {isModalOpen && 
+            <DamageModal 
+                setIsModalOpen={setIsModalOpen} 
+                damages={pokemon.DamageRelations}
+            />
+        }
+
     </article>   
   )
 }
