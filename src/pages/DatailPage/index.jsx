@@ -63,7 +63,8 @@ const DetailPage = () => {
                     stats : formatPokemonStats(stats),
                     DamageRelations,
                     types : types.map(type=>type.type.name),
-                    sprites : fomatPokemonSprites(sprites)
+                    sprites : fomatPokemonSprites(sprites),
+                    description :await getPokemonDescription(id)
                 }
                 setPokemon(formattedPokemonData)  //useState에 가공한 데이터 넣어주기
                 setIsLoading(false)  //로딩이 끝났음을 알려줌
@@ -75,8 +76,25 @@ const DetailPage = () => {
             setIsLoading(false)
         }
     }
+
+    const filterAndFormatDescription = (flavortext) =>{  //포켓몬 설명 중 한국어로 되어있는것만 가져옴
+        const koreaDescriptions =flavortext
+            ?.filter((text)=>text.language.name ==="ko")
+            .map((text)=>text.flavor_text.replace(/\r|\n|f/g, ' ')) //text.flavor_text에 줄바꿈 문자가 들어가 있어서 이걸 ' '로 바꿔줌
+        return koreaDescriptions
+    }
     //console.log("~!",pokemon?.DamageRelations)  //처음에 마운트 될 때 pokemon은 undefined여서 ?로 값이 있을때만 나타나게 함. 렌더링 되면서 이 곳에서 출력 할게 생김
 
+    const getPokemonDescription =async (id) =>{
+        const url=`https://pokeapi.co/api/v2/pokemon-species/${id}/`
+
+        const { data: pokemonSpecies } = await axios.get(url)
+        //console.log(pokemonSpecies);
+        const descriptions = filterAndFormatDescription(pokemonSpecies.flavor_text_entries)  //flavor_text_entries : 포켓몬 설명
+        
+        //배열 안에 있는 것 중 랜덤으로 하나 뽑기
+        return  descriptions[Math.floor(Math.random()*descriptions.length)]
+    }
 
     const fomatPokemonSprites = (sprites) =>{
         const newSprites = {...sprites}  //sprites 복사
@@ -247,6 +265,13 @@ const DetailPage = () => {
                                 </tbody>
                             </table>                            
                         </div>   
+
+                        <h2 className={`text-base font-semibold ${text}`}>
+                            설명
+                        </h2>
+                        <p className='text-md leading-4 font-sans text-zinc-200 max-w-[30rem] text-center'>
+                            {pokemon.description}
+                        </p>
 
                         <div className='flex my-8 flex-wrap justify-center'>
                             {pokemon.sprites.map((url,index)=>(         //화살표 함수에서 => () 는 return하지 않는다는 의미
