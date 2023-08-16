@@ -10,7 +10,7 @@ const BaseStat = ({valueStat,nameStat,type}) => {
     
     useEffect(() => {
       const setValueStat = ref.current;
-      console.log("`1`1`1`1",ref.current);
+      //console.log("`1`1`1`1",ref.current);
       const calc= valueStat * (100/255);
       setValueStat.style.width = calc+'%';
     }, [])

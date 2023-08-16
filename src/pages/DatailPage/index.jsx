@@ -9,6 +9,7 @@ import { Balance } from '../../assets/Balance';
 import { Vector } from '../../assets/Vector';
 import Type from '../../components/Type';
 import BaseStat from '../../components/BaseStat';
+import DamageRelations from '../../components/DamageRelations';
 
 const DetailPage = () => {
 
@@ -43,9 +44,9 @@ const DetailPage = () => {
                 //포켓몬이 가지고 있는 타입별로 적이 공격하는 속성별 데미지 관계 데이터 가공
                 const DamageRelations = await Promise.all(  //()의 비동기 작업을 한꺼번에 처리를 다 하고 반환
                     types.map(async (i)=>{
-                        console.log('i', i)
+                        //console.log('i', i)
                         const type = await axios.get(i.type.url);
-                        console.log('type', type);
+                        //console.log('type', type);
                         return type.data.damage_relations
                     })
                 )
@@ -71,6 +72,8 @@ const DetailPage = () => {
             setIsLoading(false)
         }
     }
+    //console.log("~!",pokemon?.DamageRelations)  //처음에 마운트 될 때 pokemon은 undefined여서 ?로 값이 있을때만 나타나게 함. 렌더링 되면서 이 곳에서 출력 할게 생김
+
 
     const formatPokemonStats = ([  //배열 구조분해 할당
         statHP,
@@ -232,7 +235,9 @@ const DetailPage = () => {
                         {pokemon.DamageRelations && (
                             <div className='w-10/12'>
                                 <h2 className={`text-center text-base font-semibold ${text}`}>
-                                    데미지 관계
+                                    <DamageRelations
+                                        damages={pokemon.DamageRelations}
+                                    />
                                 </h2>
                                 데미지
                             </div>
