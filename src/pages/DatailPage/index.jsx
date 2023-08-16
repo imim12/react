@@ -1,6 +1,9 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { Link, useParams } from 'react-router-dom'
+import { Loading } from '../../assets/Loading';
+import { LessThan } from '../../assets/LessThan';
+import { GreaterThan } from '../../assets/GreaterThan';
 
 const DetailPage = () => {
 
@@ -13,7 +16,7 @@ const DetailPage = () => {
     //App.jsx에서  <Route path='/pokemon/:id' element={<DetailPage/>}/>  로 :id 부분에 name값이 들어가서 DetailPage에 넘겨줌. 그 넘겨받은 값을 useParam()으로 받음
     //console.log(params)
     //console.log(params.id)  //포켓몬 name값이 나옴
-    
+
     const pokemonId = params.id;
     const baseUrl = `https://pokeapi.co/api/v2/pokemon/`
 
@@ -50,7 +53,8 @@ const DetailPage = () => {
                     next : nextAndPreviousPokemon.next,
                     abilities : formatPokemonAbilities(abilities),
                     stats : formatPokemonStats(stats),
-                    DamageRelations
+                    DamageRelations,
+                    types : types.map(type=>type.type.name)
                 }
                 setPokemon(formattedPokemonData)  //useState에 가공한 데이터 넣어주기
                 setIsLoading(false)  //로딩이 끝났음을 알려줌
@@ -59,6 +63,7 @@ const DetailPage = () => {
 
         } catch (error) {
             console.log(error)
+            setIsLoading(false)
         }
     }
 
@@ -96,10 +101,53 @@ const DetailPage = () => {
 
     }
 
-    if(isLoading) return <div>...loading</div>
+    if(isLoading)
+    return (
+        <div className={
+            `absolute h-auto w-auto top-1/3 -translate-x-1/2 left-1/2 z-50`
+        }>
+            <Loading className='w-12 h-12 z-50 animate-spin text-slate-900'/>
+        </div>
+    )
+
+    if(!isLoading && !pokemon){
+        return (
+            <div>...NOT FOUND</div>
+        )
+    }
+
+    const img = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${pokemon?.id}.png`
+    const bg = `bg-${pokemon?.types?.[0]}`;
+    const text= `text-${pokemon?.types?.[0]}`;
+    
 
   return (
-    <div>DetailPage</div>
+    <article className='flex items-center gap-1 flex-col w-full'>
+        <div 
+            className={
+                `${bg} w-auto h-full flex flex-col z-0 items-center justify-end relative overflow-hidden`
+            }
+        >
+            {pokemon.previous&&(
+                <Link
+                    className='absolute top-[40%] -translate-y-1/2 z-50 left-1'
+                    to={`/pokemon/${pokemon.previous}`}
+                    >   
+                    <LessThan className='w-5 h-8 p-1'/>
+                </Link>
+            )}
+
+            {pokemon.next &&(
+                <Link
+                    className='absolute top-[40%] -translate-y-1/2 z-50 left-1'
+                    to={`/pokemon/${pokemon.previous}`}
+                    >   
+                    <GreaterThan className='w-5 h-8 p-1'/>
+                </Link>
+            )}
+
+        </div>
+    </article>   
   )
 }
 
