@@ -1,6 +1,7 @@
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import LazyImage from './LazyImage';
+import { Link } from 'react-router-dom';
 
 const PokeCard = ({url, name}) => {
  
@@ -39,8 +40,8 @@ const PokeCard = ({url, name}) => {
   return (
     <>
     {pokemon &&  //pokemon && 는 if문처럼 사용하는 것으로 && 앞이 true일때(그냥 데이터도 true임) 그 뒤의 코드 실행. 또 이 안에서 pokemon 사용하려면 pokemon이 있어야함
-        <a 
-            href={`/pokemon/${name}`}
+        <Link     //a태그를 Link로 바꿈으로써 페이지 이동없이 화면 전환
+            to={`/pokemon/${name}`}
             className={`box-border rounded-lg ${border} w-[8.5rem] h-[8.5rem] z-0 bg-slate-800 justify-between items-center`}
         >   
             <div className={`${text} h-[1.5rem] text-xs w-full pt-1 px-2  text-right rounded-t-lg`}>
@@ -57,7 +58,7 @@ const PokeCard = ({url, name}) => {
             <div className={`${bg} text-center text-xs text-zinc-100 h-[1.5rem] rounded-b-lg uppercase font-medium  pt-1`}>        
                 {pokemon.name}
             </div>
-        </a>
+        </Link>
     }
     </>
   )
