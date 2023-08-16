@@ -40,7 +40,7 @@ const DetailPage = () => {
             console.log(pokemonData);
 
             if(pokemonData){
-                const { name, id, types, weight, height, stats, abilities } = pokemonData;
+                const { name, id, types, weight, height, stats, abilities, sprites } = pokemonData;
                 const nextAndPreviousPokemon = await getNextAndPreviousPokemon(id);
 
                 //포켓몬이 가지고 있는 타입별로 적이 공격하는 속성별 데미지 관계 데이터 가공
@@ -62,7 +62,8 @@ const DetailPage = () => {
                     abilities : formatPokemonAbilities(abilities),
                     stats : formatPokemonStats(stats),
                     DamageRelations,
-                    types : types.map(type=>type.type.name)
+                    types : types.map(type=>type.type.name),
+                    sprites : fomatPokemonSprites(sprites)
                 }
                 setPokemon(formattedPokemonData)  //useState에 가공한 데이터 넣어주기
                 setIsLoading(false)  //로딩이 끝났음을 알려줌
@@ -75,6 +76,17 @@ const DetailPage = () => {
         }
     }
     //console.log("~!",pokemon?.DamageRelations)  //처음에 마운트 될 때 pokemon은 undefined여서 ?로 값이 있을때만 나타나게 함. 렌더링 되면서 이 곳에서 출력 할게 생김
+
+
+    const fomatPokemonSprites = (sprites) =>{
+        const newSprites = {...sprites}  //sprites 복사
+        Object.keys(newSprites).forEach(key =>{   //Object.keys(newSprites).forEach는 그냥 
+            if(typeof newSprites[key] !== 'string'){  //키의 값이 url(string)이 아닌 null인 경우
+                delete  newSprites[key];  //그 키는 없앰
+            }
+        })
+            return Object.values(newSprites)
+    }
 
 
     const formatPokemonStats = ([  //배열 구조분해 할당
@@ -234,17 +246,18 @@ const DetailPage = () => {
                                     ))}                                   
                                 </tbody>
                             </table>                            
-                        </div>          
-                        {/* {pokemon.DamageRelations && (
-                            <div className='w-10/12'>
-                                <h2 className={`text-center text-base font-semibold ${text}`}>
-                                    <DamageRelations
-                                        damages={pokemon.DamageRelations}
-                                    />
-                                </h2>
-                                데미지
-                            </div>
-                        )}        */}
+                        </div>   
+
+                        <div className='flex my-8 flex-wrap justify-center'>
+                            {pokemon.sprites.map((url,index)=>(         //화살표 함수에서 => () 는 return하지 않는다는 의미
+                                <img
+                                    key={index}  //보통 index를 안 넣지만 바뀌지 않는 요소에는 넣어도 상관 없음
+                                    src={url}
+                                    alt="sprites"
+                                />
+                            ))}
+                        </div>       
+
                 </section>        
         </div>
         {/* 이미지를 누르면 isModalOpen 상태값이 true가 되면서 밑의 코드 실행.
