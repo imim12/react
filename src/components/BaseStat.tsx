@@ -1,10 +1,16 @@
 import React, { useEffect, useRef } from 'react'
 
-const BaseStat = ({valueStat,nameStat,type}) => {
+interface BaseStatProps {
+    valueStat:number;   
+    nameStat:string;
+    type:string;
+}
+
+const BaseStat = ({valueStat,nameStat,type}:BaseStatProps) => {
 
     const bg=`bg-${type}`;
 
-    const ref=useRef(null)  //ref : state와 다르게 업데이트가 되더라도 자동으로 렌더링 되지 않음
+    const ref=useRef<HTMLDivElement>(null)  //HTMLDivElement는 현재 ref가 사용된 곳이 div요소라서.  //ref : state와 다르게 업데이트가 되더라도 자동으로 렌더링 되지 않음  
     //useRef가 사용된 태그에 접근 할 수 있음.
     //current의 초기값으로 null을 줬지만 div에 할당했기때문에 그 div의 요소가 current에 들어감
     
@@ -12,7 +18,10 @@ const BaseStat = ({valueStat,nameStat,type}) => {
       const setValueStat = ref.current;
       //console.log("`1`1`1`1",ref.current);
       const calc= valueStat * (100/255);
-      setValueStat.style.width = calc+'%';
+      if(setValueStat){  //setValueStat은 위에서 ref가 null일수도 있다고 해놨기 때문에(초기값) if(setValueStat)으로 타입가드 해줌
+        setValueStat.style.width = calc+'%';
+      }
+      
     }, [])
     
     
