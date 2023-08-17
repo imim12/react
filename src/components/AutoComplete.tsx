@@ -1,20 +1,27 @@
 import React, { useState } from 'react'
+import { PokemonNameAndUrl } from '../types/PokemonData';
 
-const AutoComplete = ({allPokemons, setDisplayedPokemons}) => {
+interface AutoCompleteProps {
+    allPokemons:PokemonNameAndUrl[],
+    setDisplayedPokemons: React.Dispatch<React.SetStateAction<PokemonNameAndUrl[]>>  //setState에 할당할때는 React.Dispatch<React.SetStateAction<실제타입>
+}
+
+
+const AutoComplete = ({allPokemons, setDisplayedPokemons}:AutoCompleteProps) => {
     const [searchTerm, setSearchTerm] = useState("");
 
-    const handleSubmit = (e) => {
+    const handleSubmit = (e:React.FormEvent<HTMLFormElement>) => {  //이벤트 객체의 타입은 React.FormEvent<이벤트가 걸려있는 요소에 마우스를 올리면 나오는 설명에서 가져옴>
         e.preventDefault();  //submit 기본 동작인 현재 화면 리로딩 막기. submit은 실행됨(submit ->현재 화면 리로딩) 
         let text = searchTerm.trim() //공백 제거
         setDisplayedPokemons(filterNames(text))  //검색 결과에 맞는 포켓몬 넣어줌
     }
 
-    const filterNames= (input) =>{
+    const filterNames= (input:string) =>{
         const value = input.toLowerCase();
         return value ? allPokemons.filter((e)=> e.name.includes(value)) : []   //value값이 있으면 검색한 텍스트값이 이름에 있는지 찾아서 필터링
     }
 
-    const checkEqualName = (input) =>{
+    const checkEqualName = (input:string) =>{
         const filteredArray = filterNames(input);  //검색한 텍스트값이 포함된 이름이 있으면 그 객체를 담음
         return filteredArray[0]?.name === input ? [] : filteredArray;  //값과 완전히 같은 포켓몬 이름이 있으면 오토컴플리트를 띄우지 않기 위해 빈 배열 할당, 없으면 값이 포함된 포켓몬 이름들  띄워줌
         //?. 는 객체에 접근할때 속성값이 혹시 없을수도 있는데 그 때 이걸 붙이지 않으면 에러를 띄움. ?를 붙이면 에러는 띄우지 않고 undefined를 띄움
