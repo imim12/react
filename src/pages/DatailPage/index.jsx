@@ -68,7 +68,7 @@ const DetailPage = () => {
                 }
                 setPokemon(formattedPokemonData)  //useState에 가공한 데이터 넣어주기
                 setIsLoading(false)  //로딩이 끝났음을 알려줌
-                console.log(formattedPokemonData);
+                console.log("formattedPokemonData",formattedPokemonData);
             }
 
         } catch (error) {
@@ -181,7 +181,7 @@ const DetailPage = () => {
             {pokemon.next &&(
                 <Link
                     className='absolute top-[40%] -translate-y-1/2 z-50 right-1'
-                    to={`/pokemon/${pokemon.previous}`}
+                    to={`/pokemon/${pokemon.next}`}
                     >   
                     <GreaterThan className='w-5 h-8 p-1'/>
                 </Link>
