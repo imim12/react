@@ -1,12 +1,27 @@
 import React, { useEffect, useState } from 'react'
 import { useLocation } from 'react-router-dom';
 import styled from 'styled-components'
+import {getAuth, signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
+import app from '../firebase';
 
 const NavBar = () => {
+
+    const auth = getAuth(app);
+    const provider = new GoogleAuthProvider();
 
     const [show, setShow] = useState(false);
 
     const {pathname} = useLocation()  //useLocation hooks는 url정보를 가지고 있음. 
+
+    const handleAuth = () => {
+        signInWithPopup(auth, provider)   //signInWithPopup() 자체가 비동기 호출이라 .then사용
+        .then(result =>{
+            console.log(result)
+        })
+        .catch(error =>{
+            console.log(error)
+        })
+    }
 
     const listener = () => {
         if(window.scrollY>50){  //스크롤 위치가 50을 넘으면(밑으로 50)
@@ -38,7 +53,7 @@ const NavBar = () => {
         </Logo>
         {pathname === '/login' ?   //현재 url이 /login 일때만 login 버튼 보여주기
             (
-                <Login>
+                <Login onClick={handleAuth}>
                     Login
                 </Login>
             ) : null
@@ -57,6 +72,7 @@ border : 1px solid #f9f9f9;
 border-radius : 4px;
 transition : all 0.2s ease 0s;
 color : white;
+cursor: pointer;
 &:hover{
     background-color : #f9f9f9;
     color : #000;
