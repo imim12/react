@@ -3,29 +3,33 @@ import '../../App.css'
 import axios from 'axios'
 import PokeCard from '../../components/PokeCard'
 import AutoComplete from '../../components/AutoComplete'
+import { PokemonData, PokemonNameAndUrl } from '../../types/PokemonData'
 
 function MainPage() {
  
   //모든 포켓몬 데이터를 가지고 있는 State
-  const [allPokemons, setAllPokemons] = useState([])
+  const [allPokemons, setAllPokemons] = useState<PokemonNameAndUrl[]>([]);
   //실제로 리스트를 보여주는 포켓몬 데이터를 가지고 있는 state
-  const [displayedPokemons, setDisplayedPokemons] = useState([])
+  const [displayedPokemons, setDisplayedPokemons] = useState<PokemonNameAndUrl[]>([]);
   //한번에 보여주는 포켓몬 수
   const limitNum = 20;
   const url = `https://pokeapi.co/api/v2/pokemon/?limit=1008&offset=0`; //처음 가져올땐 0~19, 더보기 누르면 20~39 이런식으로 가져옴
 
 useEffect(() => {
-  fetchPokeData(true);
+  fetchPokeData();
 }, [])
 
 // useEffect(() => {
 //  handleSearchInput(debouncedSearchTerm)
 // }, [debouncedSearchTerm])
 
-const filterDisplayedPokemonData = (allPokemonsData, displayedPokemons=[]) =>{
+const filterDisplayedPokemonData = (
+  allPokemonsData: PokemonNameAndUrl[], 
+  displayedPokemons: PokemonNameAndUrl[]=[]
+  ) =>{
   const limit = displayedPokemons.length+limitNum;
   //모든 포켓몬 데이터에서 limitNum만큼 더 가져오기
-  const array = allPokemonsData.filter((pokemon, index)=>index+1<=limit)  //모든 포켓몬 데이터에 인덱스를 붙여 limit값만큼 가져오기. +1은 인덱스는 0부터 시작하기 때문에 20개씩 가져올때 +1을 하지 않으면 21개를 가져옴
+  const array = allPokemonsData.filter((_, index)=>index+1<=limit)  //모든 포켓몬 데이터에 인덱스를 붙여 limit값만큼 가져오기. +1은 인덱스는 0부터 시작하기 때문에 20개씩 가져올때 +1을 하지 않으면 21개를 가져옴
   return array;
 }
 
@@ -33,7 +37,7 @@ const filterDisplayedPokemonData = (allPokemonsData, displayedPokemons=[]) =>{
 const fetchPokeData = async () =>{
   try {
     //1008개 포켓몬 데이터 받아오기
-    const response = await axios.get(url);
+    const response = await axios.get<PokemonData>(url);
     //console.log(response.data.results);
     //console.log(pokemons);
     setAllPokemons(response.data.results);
@@ -56,7 +60,7 @@ const fetchPokeData = async () =>{
           <div className='flex flex-row flex-wrap gap-[16px] items-center justify-center px-2 max-w-4xl'>
             {displayedPokemons.length > 0 ? 
             ( 
-              displayedPokemons.map(({url, name},index)=>
+              displayedPokemons.map(({url, name}:PokemonNameAndUrl)=>
                   <PokeCard key={name} url={url} name={name}/>
                )
             ):
