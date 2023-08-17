@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom';
 import styled from 'styled-components'
-import {getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged } from 'firebase/auth';
+import {getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from 'firebase/auth';
 import app from '../firebase';
 
 const NavBar = () => {
@@ -14,6 +14,8 @@ const NavBar = () => {
     const {pathname} = useLocation()  //useLocation hooks는 url정보를 가지고 있음. 
 
     const navigate = useNavigate();
+
+    const [userData, setUserData] = useState({})
 
     useEffect(() => {
       
@@ -33,7 +35,7 @@ const NavBar = () => {
     const handleAuth = () => {
         signInWithPopup(auth, provider)   //signInWithPopup() 자체가 비동기 호출이라 .then사용
         .then(result =>{
-            console.log(result)
+            setUserData(result.user);
         })
         .catch(error =>{
             console.log(error)
@@ -57,6 +59,15 @@ const NavBar = () => {
       }
     }, [])
     
+    const handleLogout = () =>{
+        signOut(auth).then(() => {
+            setUserData({});
+        })
+        .catch(error => {
+            alert(error.message);
+        })
+    }
+
 
   return (
     //show라는 props를 NavWrapper컴포넌트에 내려주기. show값이 true면 navBar가 검정 색상으로 변화.  $show는 props로 boolean값 넘기면 경고가 떠서 저렇게 $를 붙이면 경고 안 남
@@ -73,28 +84,76 @@ const NavBar = () => {
                 <Login onClick={handleAuth}>
                     Login
                 </Login>
-            ) : null
+            ) : <SignOut>
+                    <UserImg 
+                        src={userData.photoURL} 
+                        alt='userPhoto'
+                    />
+                    <Dropdown>
+                        <span onClick = {handleLogout}>Sign out</span>
+                    </Dropdown>
+                </SignOut>
         }
         
     </NavWrapper>
   )
 }
 
+
+const UserImg = styled.img`
+    border-radius: 50%;
+    width: 100%;
+    height: 100%;
+`
+
+const Dropdown = styled.div`
+    position: absolute;
+    top: 48px;
+    right: 0px;
+    background: rgb(19, 19, 19);
+    border: 1px solid rgba(151, 151, 151, 0.34);
+    border-radius: 4px;
+    box-shadow: rgb(0 0 0 / 50%) 0px 0px 18px 0px;
+    padding: 10px;
+    font-size: 14px;
+    letter-spacing: 3px;
+    width: 100px;
+    opacity: 0;
+    color: #fff
+`
+
+const SignOut = styled.div`
+    position: relative;
+    height: 48px;
+    width: 48px;
+    display: flex;
+    cursor: pointer;
+    align-items: center;
+    justify-content: center;
+
+    &:hover  {
+        ${Dropdown} {
+            opacity: 1;
+            transition-duration: 1s;
+        }
+    }
+`
+
 const Login = styled.a`
-background-color:rgba(0,0,0,0.6);
-padding : 8px 16px;
-text-transform : uppercase;
-letter-spacing : 1.55px;
-border : 1px solid #f9f9f9;
-border-radius : 4px;
-transition : all 0.2s ease 0s;
-color : white;
-cursor: pointer;
-&:hover{
-    background-color : #f9f9f9;
-    color : #000;
-    border-color: transparent
-}
+    background-color:rgba(0,0,0,0.6);
+    padding : 8px 16px;
+    text-transform : uppercase;
+    letter-spacing : 1.55px;
+    border : 1px solid #f9f9f9;
+    border-radius : 4px;
+    transition : all 0.2s ease 0s;
+    color : white;
+    cursor: pointer;
+    &:hover{
+        background-color : #f9f9f9;
+        color : #000;
+        border-color: transparent
+    }
 `
 
 const Image= styled.img`
