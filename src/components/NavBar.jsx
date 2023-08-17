@@ -4,6 +4,9 @@ import styled from 'styled-components'
 import {getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from 'firebase/auth';
 import app from '../firebase';
 
+const inintialUserData = localStorage.getItem('userData') ? 
+    JSON.parse(localStorage.getItem('userData')) : {};
+
 const NavBar = () => {
 
     const auth = getAuth(app);
@@ -15,7 +18,7 @@ const NavBar = () => {
 
     const navigate = useNavigate();
 
-    const [userData, setUserData] = useState({})
+    const [userData, setUserData] = useState(inintialUserData)
 
     useEffect(() => {
       
@@ -36,6 +39,7 @@ const NavBar = () => {
         signInWithPopup(auth, provider)   //signInWithPopup() 자체가 비동기 호출이라 .then사용
         .then(result =>{
             setUserData(result.user);
+            localStorage.setItem("userData", JSON.stringify(result.user));   //저장해줘야 새로고침해도 데이터가 날아가지않음
         })
         .catch(error =>{
             console.log(error)
