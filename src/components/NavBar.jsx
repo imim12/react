@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import styled from 'styled-components'
-import {getAuth, signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
+import {getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged } from 'firebase/auth';
 import app from '../firebase';
 
 const NavBar = () => {
@@ -12,6 +12,23 @@ const NavBar = () => {
     const [show, setShow] = useState(false);
 
     const {pathname} = useLocation()  //useLocation hooks는 url정보를 가지고 있음. 
+
+    const navigate = useNavigate();
+
+    useEffect(() => {
+      
+        const unsubscribe = onAuthStateChanged(auth, (user)=>{  //유저의 로그인 정보가 변할때 호출
+            if(!user){  //user정보가 없으면
+                navigate("/login");  //main페이지로
+            }else if(user && pathname === "/login"){
+                navigate("/");  //없으면 로그인 페이지로
+            }
+        })
+      return () => {
+        unsubscribe()  //더이상 사용하지 않을때 제거??
+      }
+    }, [pathname])
+    
 
     const handleAuth = () => {
         signInWithPopup(auth, provider)   //signInWithPopup() 자체가 비동기 호출이라 .then사용
