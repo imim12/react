@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom';
 import styled from 'styled-components'
-import {getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from 'firebase/auth';
+import {User, getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from 'firebase/auth';
 import app from '../firebase';
 
-const inintialUserData = localStorage.getItem('userData') ? 
-    JSON.parse(localStorage.getItem('userData')) : {};
+const userDataFromStorage = localStorage.getItem('userData') 
+
+const inintialUserData = userDataFromStorage ? 
+    JSON.parse(userDataFromStorage) : null;
 
 const NavBar = () => {
 
@@ -18,7 +20,7 @@ const NavBar = () => {
 
     const navigate = useNavigate();
 
-    const [userData, setUserData] = useState(inintialUserData)
+    const [userData, setUserData] = useState<User | null>(inintialUserData)
 
     useEffect(() => {
       
@@ -65,7 +67,7 @@ const NavBar = () => {
     
     const handleLogout = () =>{
         signOut(auth).then(() => {
-            setUserData({});
+            setUserData(null);
         })
         .catch(error => {
             alert(error.message);
@@ -75,7 +77,7 @@ const NavBar = () => {
 
   return (
     //show라는 props를 NavWrapper컴포넌트에 내려주기. show값이 true면 navBar가 검정 색상으로 변화.  $show는 props로 boolean값 넘기면 경고가 떠서 저렇게 $를 붙이면 경고 안 남
-    <NavWrapper $show={show}>   
+    <NavWrapper show={show}>   
         <Logo>
             <Image
                 alt="Poke logo"
@@ -89,10 +91,12 @@ const NavBar = () => {
                     Login
                 </Login>
             ) : <SignOut>
-                    <UserImg 
-                        src={userData.photoURL} 
-                        alt='userPhoto'
-                    />
+                    {userData?.photoURL &&
+                         <UserImg 
+                         src={userData.photoURL} 
+                         alt='userPhoto'
+                     />
+                    }                   
                     <Dropdown>
                         <span onClick = {handleLogout}>Sign out</span>
                     </Dropdown>
@@ -171,7 +175,7 @@ const Logo=styled.a`
     margin-top:4px;
 `
 
-const NavWrapper = styled.nav`
+const NavWrapper = styled.nav<{show:boolean}>`
 position: fixed;
 top: 0;
 left: 0;
