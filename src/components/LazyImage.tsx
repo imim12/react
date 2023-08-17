@@ -1,8 +1,14 @@
 import React, { useEffect, useState } from 'react'
 
-const LazyImage = ({url, alt}) => {
-    const [isLoading,setIsLoading] = useState(true);  //초기값 true  //5. 랜더링. 
-    const [opacity, setOpacity] = useState('opacity-0'); 
+interface LazyImageProps {
+    url : string;
+    alt : string;
+}
+
+
+const LazyImage = ({url, alt}:LazyImageProps) => {
+    const [isLoading,setIsLoading] = useState<boolean>(true);  //초기값 true  //5. 랜더링. 
+    const [opacity, setOpacity] = useState<string>('opacity-0'); 
 
     useEffect(()=>{  //1.   //랜더링 과정을 생각해봄. 5번이 먼저 일어나고 3번이 일어나는지 잘 모르겠음
         isLoading ? setOpacity('opacity-0') : setOpacity('opacity-100');  //4.  setOpacity값 변경
